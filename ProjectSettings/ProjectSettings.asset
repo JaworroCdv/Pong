@@ -509,6 +509,10 @@ PlayerSettings:
   ps4videoRecordingFeaturesUsed: 0
   ps4contentSearchFeaturesUsed: 0
   ps4CompatibilityPS5: 0
+<<<<<<< HEAD
+=======
+  ps4AllowPS5Detection: 0
+>>>>>>> main
   ps4GPU800MHz: 1
   ps4attribEyeToEyeDistanceSettingVR: 0
   ps4IncludedModules: []
@@ -620,7 +624,11 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
+<<<<<<< HEAD
   activeInputHandler: 1
+=======
+  activeInputHandler: 0
+>>>>>>> main
   cloudProjectId: 
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
