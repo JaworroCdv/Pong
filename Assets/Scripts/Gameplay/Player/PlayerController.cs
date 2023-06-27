@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Core.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,19 +9,37 @@ namespace Gameplay.Player
         [SerializeField] private float moveSpeed;
         [SerializeField] private Collider2D collider;
 
+        public Vector2 Position => transform.position;
+        public int Points { get; set; }
+        
         private IGameContext gameContext;
+        
         private int playerIndex;
         private float moveValue;
+        private bool isMultiplayer;
 
         private const float ScreenXPadding = 20f;
+        private const float AIMovementMultiplier = 0.7f;
 
-        public void Initialize(IGameContext gameContext)
+        public void Initialize(IGameContext gameContext, bool isMultiplayer)
         {
             this.gameContext = gameContext;
+            this.isMultiplayer = isMultiplayer;
 
             playerIndex = gameContext.PlayersManager.Players.ToList().IndexOf(this);
             
             InitializePosition();
+        }
+
+        public void Restart()
+        {
+            InitializePosition();
+        }
+
+        public void UpdateController()
+        {
+            Move();
+            HandleViewportPosition();
         }
 
         private void InitializePosition()
@@ -39,15 +56,26 @@ namespace Gameplay.Player
             transform.position = gameContext.GameCamera.ScreenToWorldPoint(position);
         }
 
-        private void Update()
-        {
-            Move();
-            HandleViewportPosition();
-        }
-
         private void Move()
         {
-            transform.position += Vector3.up * moveSpeed * moveValue * Time.deltaTime;
+            if(isMultiplayer || (!isMultiplayer && playerIndex == 0))
+            {
+                transform.position += Vector3.up * moveSpeed * moveValue * Time.deltaTime;
+            }
+            else if (!isMultiplayer && playerIndex == 1)
+            {
+                var cam = gameContext.GameCamera;
+                var ballPosition = gameContext.BallController.transform.position;
+                var ballViewportPositionX = cam.WorldToViewportPoint(ballPosition).x;
+                
+                if (ballViewportPositionX < 0.5f)
+                    return;
+                
+                var playerPosition = transform.position;
+                
+                var targetPositionY = Mathf.Lerp(playerPosition.y, ballPosition.y, moveSpeed * Time.deltaTime * AIMovementMultiplier);
+                transform.position = new Vector3(playerPosition.x, targetPositionY, playerPosition.z);
+            }
         }
 
         private void HandleViewportPosition()
@@ -85,6 +113,9 @@ namespace Gameplay.Player
 
         private void OnMove(InputValue value)
         {
+            if (!isMultiplayer && playerIndex != 0)
+                return;
+            
             moveValue = value.Get<float>();
         }
     }

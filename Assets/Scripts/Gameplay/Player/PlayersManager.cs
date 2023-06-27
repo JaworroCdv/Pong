@@ -9,6 +9,7 @@ namespace Gameplay.Player
     {
         IEnumerable<PlayerController> Players { get; }
         IEnumerable<PlayerInitializer> Initializers { get; }
+        PlayerController GetClosestPlayerByScreenPosition(Vector3 screenPosition);
     }
     
     public class PlayersManager : MonoBehaviour, IPlayersManager
@@ -27,22 +28,46 @@ namespace Gameplay.Player
 
             players = new List<PlayerController>();
             
+            var isMultiplayer = this.gameContext.GameMode == GameMode.MultiPlayer;
+
             foreach (var player in initializers)
             {
                 var input = player.Initialize(gameContext);
-                InitializePlayer(input);
+                InitializePlayer(input, isMultiplayer);
             }
+        }
+
+        public void PostInitialize()
+        {
+            gameContext.GameplayManager.OnGameplayRestart += Restart;
         }
 
         public void UpdateManager()
         {
+            foreach (var player in players)
+            {
+                player.UpdateController();
+            }
         }
 
-        private void InitializePlayer(PlayerInput input)
+        public void Restart()
+        {
+            foreach (var player in players)
+            {
+                player.Restart();
+            }
+        }
+
+        public PlayerController GetClosestPlayerByScreenPosition(Vector3 screenPosition)
+        {
+            return screenPosition.x < Screen.width / 2f ? players[0] : players[1];
+        }
+
+        private void InitializePlayer(PlayerInput input, bool isMultiplayer = false)
         {
             var playerController = input.GetComponent<PlayerController>();
             players.Add(playerController);
-            playerController.Initialize(gameContext);
+            playerController.Initialize(gameContext, isMultiplayer);
         }
     }
 }

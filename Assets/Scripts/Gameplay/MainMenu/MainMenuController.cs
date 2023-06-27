@@ -11,6 +11,8 @@ namespace Gameplay.MainMenu
         [SerializeField] private Button multiPlayerStart;
         [SerializeField] private Button exitButton;
     
+        public GameMode GameMode { get; private set; }
+        
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -25,12 +27,14 @@ namespace Gameplay.MainMenu
 
         private void StartSinglePlayerGame()
         {
+            GameMode = GameMode.SinglePlayer;
             SceneManager.LoadSceneAsync(SceneConstants.Gameplay);
         }
 
         private void StartMultiPlayerGame()
         {
-        
+            GameMode = GameMode.MultiPlayer;
+            SceneManager.LoadSceneAsync(SceneConstants.Gameplay);
         }
 
         private void ExitGame()

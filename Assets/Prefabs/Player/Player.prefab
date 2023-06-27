@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 2655826255239908606}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6591e91fe5ed4050b42f705eda59e654, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 8
+  moveSpeed: 5.1
   collider: {fileID: 3410205028737474456}
 --- !u!61 &3410205028737474456
 BoxCollider2D:
